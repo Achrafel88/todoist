@@ -1,7 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- State & Selectors ---
     let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    let currentTheme = localStorage.getItem('theme') || 'light';
     
+    const body = document.body;
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
     const todoForm = document.getElementById('todoForm');
     const todoInput = document.getElementById('todoInput');
     const pendingList = document.getElementById('pendingList');
@@ -9,20 +13,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const remainingCount = document.getElementById('remainingCount');
     const clearCompletedBtn = document.getElementById('clearCompleted');
     const currentDateEl = document.getElementById('currentDate');
+    const greetingEl = document.getElementById('greeting');
     const pendingBadge = document.getElementById('pendingBadge');
     const completedBadge = document.getElementById('completedBadge');
     
     // --- Initialization ---
     function init() {
+        applyTheme(currentTheme);
         displayDate();
+        setGreeting();
         renderTasks();
         setupEventListeners();
         lucide.createIcons();
     }
 
-    // --- Core Functions ---
+    // --- Theme Management ---
+    function applyTheme(theme) {
+        body.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+        themeIcon.setAttribute('data-lucide', theme === 'dark' ? 'sun' : 'moon');
+        lucide.createIcons();
+    }
+
+    function toggleTheme() {
+        currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+        applyTheme(currentTheme);
+    }
+
+    // --- Core Logic ---
     function saveToLocalStorage() {
         localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+    function setGreeting() {
+        const hour = new Date().getHours();
+        if (hour < 12) greetingEl.textContent = "🌅 Bonjour !";
+        else if (hour < 18) greetingEl.textContent = "☀️ Bon après-midi !";
+        else greetingEl.textContent = "🌙 Bonsoir !";
     }
 
     function renderTasks() {
@@ -52,10 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Update Stats
         updateStats(pendingTasks.length, completedTasks.length);
-        
-        // Refresh icons for new elements
         lucide.createIcons();
     }
 
@@ -65,20 +89,16 @@ document.addEventListener('DOMContentLoaded', () => {
         div.setAttribute('data-id', task.id);
 
         div.innerHTML = `
-            <div class="task-content">
-                <div class="checkbox-wrapper" onclick="toggleTask('${task.id}')">
-                    <div class="custom-checkbox">
-                        ${task.completed ? '<i data-lucide="check" style="width:14px; color:white;"></i>' : ''}
-                    </div>
-                </div>
-                <span class="task-text" ondblclick="editTask('${task.id}')">${task.text}</span>
+            <div class="checkbox-wrapper" onclick="toggleTask('${task.id}')">
+                ${task.completed ? '<i data-lucide="check" style="width:14px; color:white;"></i>' : ''}
             </div>
+            <span class="task-text" ondblclick="editTask('${task.id}')">${task.text}</span>
             <div class="task-actions">
-                <button class="action-btn btn-edit" onclick="editTask('${task.id}')" title="Modifier">
-                    <i data-lucide="edit-3" style="width:16px;"></i>
+                <button class="action-btn" onclick="editTask('${task.id}')">
+                    <i data-lucide="edit-3" style="width:14px;"></i>
                 </button>
-                <button class="action-btn btn-delete" onclick="deleteTask('${task.id}')" title="Supprimer">
-                    <i data-lucide="trash-2" style="width:16px;"></i>
+                <button class="action-btn btn-delete" onclick="deleteTask('${task.id}')">
+                    <i data-lucide="trash-2" style="width:14px;"></i>
                 </button>
             </div>
         `;
@@ -89,40 +109,30 @@ document.addEventListener('DOMContentLoaded', () => {
     function addTask(e) {
         e.preventDefault();
         const text = todoInput.value.trim();
-        
         if (text === '') return;
 
-        const newTask = {
+        tasks.unshift({
             id: Date.now().toString(),
             text: text,
-            completed: false,
-            createdAt: new Date().toISOString()
-        };
+            completed: false
+        });
 
-        tasks.unshift(newTask);
         saveToLocalStorage();
         renderTasks();
         todoInput.value = '';
-        todoInput.focus();
     }
 
     window.toggleTask = function(id) {
-        tasks = tasks.map(task => {
-            if (task.id === id) {
-                return { ...task, completed: !task.completed };
-            }
-            return task;
-        });
+        tasks = tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
         saveToLocalStorage();
         renderTasks();
     };
 
     window.deleteTask = function(id) {
-        const element = document.querySelector(`[data-id="${id}"]`);
-        element.classList.add('removing');
-        
-        element.addEventListener('animationend', () => {
-            tasks = tasks.filter(task => task.id !== id);
+        const el = document.querySelector(`[data-id="${id}"]`);
+        el.classList.add('removing');
+        el.addEventListener('animationend', () => {
+            tasks = tasks.filter(t => t.id !== id);
             saveToLocalStorage();
             renderTasks();
         }, { once: true });
@@ -131,51 +141,37 @@ document.addEventListener('DOMContentLoaded', () => {
     window.editTask = function(id) {
         const task = tasks.find(t => t.id === id);
         const newText = prompt("Modifier la tâche :", task.text);
-        
-        if (newText !== null && newText.trim() !== '') {
-            tasks = tasks.map(t => {
-                if (t.id === id) {
-                    return { ...t, text: newText.trim() };
-                }
-                return t;
-            });
+        if (newText && newText.trim()) {
+            tasks = tasks.map(t => t.id === id ? { ...t, text: newText.trim() } : t);
             saveToLocalStorage();
             renderTasks();
         }
     };
 
     function clearCompleted() {
-        if (confirm("Voulez-vous supprimer toutes les tâches terminées ?")) {
+        if (confirm("Supprimer les tâches terminées ?")) {
             tasks = tasks.filter(t => !t.completed);
             saveToLocalStorage();
             renderTasks();
         }
     }
 
-    function updateStats(pendingLen, completedLen) {
-        remainingCount.textContent = pendingLen;
-        pendingBadge.textContent = pendingLen;
-        completedBadge.textContent = completedLen;
-        
-        // Hide/Show Clear Completed button
-        if (completedLen > 0) {
-            clearCompletedBtn.style.visibility = 'visible';
-            clearCompletedBtn.style.opacity = '1';
-        } else {
-            clearCompletedBtn.style.visibility = 'hidden';
-            clearCompletedBtn.style.opacity = '0';
-        }
+    function updateStats(pLen, cLen) {
+        remainingCount.textContent = pLen;
+        pendingBadge.textContent = pLen;
+        completedBadge.textContent = cLen;
+        clearCompletedBtn.style.opacity = cLen > 0 ? '1' : '0';
+        clearCompletedBtn.style.pointerEvents = cLen > 0 ? 'auto' : 'none';
     }
 
     function displayDate() {
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        const today = new Date();
-        const formattedDate = today.toLocaleDateString('fr-FR', options);
-        currentDateEl.textContent = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+        currentDateEl.textContent = new Date().toLocaleDateString('fr-FR', options);
     }
 
     function setupEventListeners() {
         todoForm.addEventListener('submit', addTask);
+        themeToggle.addEventListener('click', toggleTheme);
         clearCompletedBtn.addEventListener('click', clearCompleted);
     }
 

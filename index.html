@@ -16,14 +16,28 @@
     <div class="app-container">
         <header>
             <div class="logo">
-                <i data-lucide="check-circle" class="logo-icon"></i>
-                <h1>TaskFlow</h1>
+                <div class="logo-circle">
+                    <i data-lucide="check" class="logo-icon"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>TaskFlow</h1>
+                    <span class="tagline">Gérez vos idées</span>
+                </div>
             </div>
-            <div class="date-display" id="currentDate"></div>
+            <div class="header-actions">
+                <div class="date-display" id="currentDate"></div>
+                <button id="themeToggle" class="theme-btn" title="Changer de mode">
+                    <i data-lucide="moon" id="themeIcon"></i>
+                </button>
+            </div>
         </header>
 
         <main>
-            <section class="input-section">
+            <section class="hero-section">
+                <p class="greeting" id="greeting">Bonjour !</p>
+                <h2 class="main-title">Prêt à être productif aujourd'hui ?</h2>
+            </section>
+
                 <form id="todoForm">
                     <div class="input-group">
                         <input type="text" id="todoInput" placeholder="Quelle est la prochaine étape ?" autocomplete="off">
