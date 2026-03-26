@@ -379,6 +379,27 @@ header {
   to { opacity: 0; transform: scale(0.95); }
 }
 
+/* Drag & Drop Styles */
+.task-item.dragging {
+  opacity: 0.5;
+  border-style: dashed;
+  transform: scale(0.98);
+}
+
+.task-list.drag-over {
+  background-color: var(--primary-glow);
+  border: 1px dashed var(--primary);
+  border-radius: 16px;
+}
+
+.task-item.drag-over-top {
+  border-top: 2px solid var(--primary);
+}
+
+.task-item.drag-over-bottom {
+  border-bottom: 2px solid var(--primary);
+}
+
 .empty-state {
   text-align: center;
   padding: 40px 0;
