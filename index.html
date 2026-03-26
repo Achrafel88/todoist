@@ -38,16 +38,23 @@
                 <h2 class="main-title">Prêt à être productif aujourd'hui ?</h2>
             </section>
 
+            <section class="input-section">
                 <form id="todoForm">
                     <div class="input-group">
                         <input type="text" id="todoInput" placeholder="Quelle est la prochaine étape ?" autocomplete="off">
-                        <button type="submit" class="btn-primary" id="addBtn">
-                            <i data-lucide="plus"></i>
-                            <span>Ajouter</span>
-                        </button>
+                        <div class="input-actions">
+                            <button type="button" id="micBtn" class="mic-btn" title="Dicter une tâche">
+                                <i data-lucide="mic"></i>
+                            </button>
+                            <button type="submit" class="btn-primary" id="addBtn">
+                                <i data-lucide="plus"></i>
+                                <span>Ajouter</span>
+                            </button>
+                        </div>
                     </div>
                 </form>
             </section>
+
 
             <div class="stats-bar">
                 <div class="stat-item">

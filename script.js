@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeIcon = document.getElementById('themeIcon');
     const todoForm = document.getElementById('todoForm');
     const todoInput = document.getElementById('todoInput');
+    const micBtn = document.getElementById('micBtn');
     const pendingList = document.getElementById('pendingList');
     const completedList = document.getElementById('completedList');
     const remainingCount = document.getElementById('remainingCount');
@@ -17,6 +18,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const pendingBadge = document.getElementById('pendingBadge');
     const completedBadge = document.getElementById('completedBadge');
     
+    // --- Speech Recognition Setup ---
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition;
+    let isRecording = false;
+
+    if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.lang = 'fr-FR';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            todoInput.value = transcript;
+            
+            setTimeout(() => {
+                if (todoInput.value.trim() !== "") {
+                    addTask(new Event('submit'));
+                }
+            }, 500);
+        };
+
+        recognition.onend = () => {
+            isRecording = false;
+            micBtn.classList.remove('recording');
+            micBtn.innerHTML = '<i data-lucide="mic"></i>';
+            lucide.createIcons();
+        };
+
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error', event.error);
+            stopRecording();
+        };
+    } else {
+        if (micBtn) micBtn.style.display = 'none';
+    }
+
     // --- Initialization ---
     function init() {
         applyTheme(currentTheme);
@@ -59,7 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const pendingTasks = tasks.filter(t => !t.completed);
         const completedTasks = tasks.filter(t => t.completed);
 
-        // Render Pending
         if (pendingTasks.length === 0) {
             document.getElementById('pendingEmpty').classList.add('visible');
         } else {
@@ -69,7 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Render Completed
         if (completedTasks.length === 0) {
             document.getElementById('completedEmpty').classList.add('visible');
         } else {
@@ -107,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function addTask(e) {
-        e.preventDefault();
+        if (e) e.preventDefault();
         const text = todoInput.value.trim();
         if (text === '') return;
 
@@ -122,6 +158,21 @@ document.addEventListener('DOMContentLoaded', () => {
         todoInput.value = '';
     }
 
+    function startRecording() {
+        if (!recognition) return;
+        isRecording = true;
+        micBtn.classList.add('recording');
+        micBtn.innerHTML = '<i data-lucide="mic-off"></i>';
+        lucide.createIcons();
+        recognition.start();
+    }
+
+    function stopRecording() {
+        if (!recognition) return;
+        isRecording = false;
+        recognition.stop();
+    }
+
     window.toggleTask = function(id) {
         tasks = tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
         saveToLocalStorage();
@@ -130,6 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.deleteTask = function(id) {
         const el = document.querySelector(`[data-id="${id}"]`);
+        if (!el) return;
         el.classList.add('removing');
         el.addEventListener('animationend', () => {
             tasks = tasks.filter(t => t.id !== id);
@@ -173,6 +225,12 @@ document.addEventListener('DOMContentLoaded', () => {
         todoForm.addEventListener('submit', addTask);
         themeToggle.addEventListener('click', toggleTheme);
         clearCompletedBtn.addEventListener('click', clearCompleted);
+        if (micBtn) {
+            micBtn.addEventListener('click', () => {
+                if (isRecording) stopRecording();
+                else startRecording();
+            });
+        }
     }
 
     init();
