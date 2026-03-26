@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow | Gestionnaire de Tâches</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <i data-lucide="check-circle" class="logo-icon"></i>
+                <h1>TaskFlow</h1>
+            </div>
+            <div class="date-display" id="currentDate"></div>
+        </header>
+
+        <main>
+            <section class="input-section">
+                <form id="todoForm">
+                    <div class="input-group">
+                        <input type="text" id="todoInput" placeholder="Quelle est la prochaine étape ?" autocomplete="off">
+                        <button type="submit" class="btn-primary" id="addBtn">
+                            <i data-lucide="plus"></i>
+                            <span>Ajouter</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-label">Tâches restantes:</span>
+                    <span class="stat-value" id="remainingCount">0</span>
+                </div>
+                <button id="clearCompleted" class="btn-text" title="Supprimer les tâches terminées">
+                    <i data-lucide="trash-2"></i>
+                    Nettoyer
+                </button>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- En cours Section -->
+                <section class="list-container" id="pendingSection">
+                    <div class="list-header">
+                        <div class="header-title">
+                            <i data-lucide="clock" class="icon-pending"></i>
+                            <h2>📌 En cours</h2>
+                        </div>
+                        <span class="badge" id="pendingBadge">0</span>
+                    </div>
+                    <div class="task-list" id="pendingList">
+                        <!-- Tasks injected here -->
+                    </div>
+                    <div class="empty-state" id="pendingEmpty">
+                        <p>Aucune tâche en cours. C'est le moment de se reposer !</p>
+                    </div>
+                </section>
+
+                <!-- Terminé Section -->
+                <section class="list-container" id="completedSection">
+                    <div class="list-header">
+                        <div class="header-title">
+                            <i data-lucide="check-square" class="icon-completed"></i>
+                            <h2>✅ Terminé</h2>
+                        </div>
+                        <span class="badge badge-success" id="completedBadge">0</span>
+                    </div>
+                    <div class="task-list" id="completedList">
+                        <!-- Tasks injected here -->
+                    </div>
+                    <div class="empty-state" id="completedEmpty">
+                        <p>Rien de terminé pour l'instant.</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
