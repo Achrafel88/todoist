@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const completedList = document.getElementById('completedList');
     const remainingCount = document.getElementById('remainingCount');
     const clearCompletedBtn = document.getElementById('clearCompleted');
+    const clearPendingBtn = document.getElementById('clearPending');
     const currentDateEl = document.getElementById('currentDate');
     const greetingEl = document.getElementById('greeting');
     const pendingBadge = document.getElementById('pendingBadge');
@@ -330,6 +331,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function clearPending() {
+        if (confirm("Supprimer toutes les tâches en cours ?")) {
+            tasks = tasks.filter(t => t.completed); // Keep only completed tasks
+            saveToLocalStorage();
+            renderTasks();
+        }
+    }
+
     function updateStats(pLen, cLen) {
         remainingCount.textContent = pLen;
         pendingBadge.textContent = pLen;
@@ -347,6 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
         todoForm.addEventListener('submit', addTask);
         themeToggle.addEventListener('click', toggleTheme);
         clearCompletedBtn.addEventListener('click', clearCompleted);
+        clearPendingBtn.addEventListener('click', clearPending);
         if (micBtn) {
             micBtn.addEventListener('click', () => {
                 if (isRecording) stopRecording();

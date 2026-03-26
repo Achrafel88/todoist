@@ -321,11 +321,34 @@ header {
 .btn-text {
   background: none;
   border: none;
-  font-weight: 600;
-  font-size: 13px;
   color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition-fast);
+  padding: 4px 8px;
+  border-radius: 8px;
+  white-space: nowrap; /* Prevent wrapping */
 }
+
+.btn-text:hover {
+  color: var(--primary);
+  background: var(--primary-glow);
+}
+
+#clearCompleted:hover {
+  color: var(--error);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+#clearPending:hover {
+  color: var(--error);
+  background: rgba(239, 68, 68, 0.05);
+}
+
 
 .input-actions {
   display: flex;
