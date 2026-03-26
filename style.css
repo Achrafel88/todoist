@@ -2,17 +2,17 @@
   /* Light Mode Palette */
   --primary: #6366f1;
   --primary-glow: rgba(99, 102, 241, 0.15);
-  --bg-color: #f8fafc;
-  --panel-bg: rgba(255, 255, 255, 0.85);
+  --bg-color: #f0f4f8; /* Slightly darker background for contrast */
+  --panel-bg: #ffffff; /* Solid white for clear card background */
   --text-main: #0f172a;
   --text-secondary: #64748b;
-  --border-color: rgba(226, 232, 240, 0.6);
+  --border-color: #e2e8f0; /* Clearer border in light mode */
   --success: #10b981;
   --error: #ef4444;
   --white: #ffffff;
   --input-bg: #ffffff;
-  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.5);
+  --card-shadow: 0 6px 16px -4px rgba(0, 0, 0, 0.08), 0 2px 8px -2px rgba(0, 0, 0, 0.04); /* More prominent shadow */
+  --glass-border: rgba(226, 232, 240, 0.8); /* Stronger border for glass effect elements */
 }
 
 [data-theme="dark"] {
