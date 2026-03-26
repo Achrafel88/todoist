@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (SpeechRecognition) {
         recognition = new SpeechRecognition();
-        recognition.lang = 'fr-FR';
+        recognition.lang = 'ar-MA';
         recognition.interimResults = false;
         recognition.maxAlternatives = 1;
 
